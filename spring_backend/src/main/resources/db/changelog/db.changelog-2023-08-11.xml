@@ -1,0 +1,96 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="0" author="jwe">
+        <createTable tableName="level">
+            <column name="levelid" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="levelPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maxdistance" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="initialtime" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="levelx" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="heightcorrection" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="width" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="height" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="playerx" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="playery" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="objects" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="1" author="jwe">
+        <createTable tableName="highscore">
+            <column name="highscoreid" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="highscorePK"/>
+            </column>
+            <column name="levelid" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="points" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="jwe">
+            <createTable tableName="result">
+                <column name="resultid" type="BIGINT" autoIncrement="true">
+                    <constraints nullable="false" primaryKey="true" primaryKeyName="resultPK"/>
+                </column>
+                <column name="levelid" type="BIGINT">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="result" type="TEXT">
+                    <constraints nullable="false"/>
+                </column>
+            </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="jwe">
+        <addUniqueConstraint tableName="level" columnNames="name" constraintName="UNIQUE_LEVEL_NAME"/>
+    </changeSet>
+    
+    <changeSet id="4" author="jwe">
+        <addForeignKeyConstraint baseTableName="highscore" baseColumnNames="levelid" constraintName="FK_levelid_HIGHSCORE"
+                                 referencedTableName="level"
+                                 referencedColumnNames="levelid"/>
+    </changeSet>
+    <changeSet id="5" author="jwe">
+        <addForeignKeyConstraint baseTableName="result" baseColumnNames="levelid" constraintName="FK_levelid_RESULT"
+                                 referencedTableName="level"
+                                 referencedColumnNames="levelid"/>
+    </changeSet>
+    
+    <changeSet id="6" author="jwe">
+        <createIndex tableName="level" indexName="LEVELNAME">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

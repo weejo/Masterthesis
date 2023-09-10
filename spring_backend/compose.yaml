@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=planetracer
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    ports:
+      - '5432:5432'

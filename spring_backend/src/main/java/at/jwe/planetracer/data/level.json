@@ -1,0 +1,48 @@
+{
+  "layers": [
+    {
+      "name": "PLANET_LAYER",
+      "objects": [
+        {
+          "gid": 1,
+          "type": "planet",
+          "x": 228,
+          "y": 96
+        },
+        {
+          "gid": 3,
+          "type": "planet",
+          "x": 128,
+          "y": 96
+        },
+        {
+          "gid": 4,
+          "type": "planet",
+          "x": 328,
+          "y": 96
+        },
+        {
+          "gid": 5,
+          "type": "planet",
+          "x": 428,
+          "y": 96
+        },
+        {
+          "gid": 2,
+          "type": "planet",
+          "x": 128,
+          "y": 16
+        }
+      ],
+      "type": "objectgroup"
+    }
+  ],
+  "orientation": "orthogonal",
+  "tilesets": [],
+  "maxDistance": 500,
+  "initialTime": 30,
+  "level_x": -500,
+  "level_y": 500,
+  "width": 1920,
+  "height": 1080
+}

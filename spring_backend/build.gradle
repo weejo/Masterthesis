@@ -1,0 +1,87 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.2'
+    id 'io.spring.dependency-management' version '1.1.2'
+    id 'com.bmuschko.docker-remote-api' version '9.3.2'
+}
+
+import com.bmuschko.gradle.docker.tasks.image.*
+
+group = 'at.jwe'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+}
+
+compileJava {
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.postgresql:postgresql:42.6.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+}
+
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'at.jwe.planetracer.PlanetracerApplication',
+                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+        )
+    }
+    enabled = false
+    archiveFileName.set("planetracer-"+version+".jar")
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.register('createDockerFile', Dockerfile) {
+    from 'eclipse-temurin:17'
+    copyFile jar.archiveFileName.get(), '/app/planetracer.jar'
+    entryPoint('java', '-Ddatasource.host=postgres','-jar', '/app/planetracer.jar')
+    exposePort 8080
+}
+tasks.register('syncJar', Copy) {
+    dependsOn assemble
+    from jar.destinationDirectory
+    into "$buildDir/docker"
+}
+tasks.register('buildImage', DockerBuildImage) {
+    dependsOn createDockerFile, syncJar
+    inputDir = createDockerFile.getDestDir()
+    images = ["planetracer:"+version]
+}
+tasks.register('pushDockerImage', DockerPushImage) {
+    dependsOn buildImage
+}
+
